@@ -26,7 +26,7 @@
         h2 {
             text-align: center;
         }
-        input, button, select {
+        input, button {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -68,10 +68,6 @@
             <h2>Registrar</h2>
             <input type="text" id="register-username" placeholder="Novo Usuário">
             <input type="password" id="register-password" placeholder="Nova Senha">
-            <select id="register-role">
-                <option value="aluno">Aluno</option>
-                <option value="admin">Administrador</option>
-            </select>
             <button onclick="register()">Registrar</button>
             <p id="register-error" class="error"></p>
             <p>Já tem uma conta? <a href="#" onclick="showLogin()">Faça login aqui</a></p>
@@ -98,6 +94,7 @@
         // Simulação de banco de dados
         const users = [];
         let currentUser = null;
+        const adminPassword = "senhaAdmin123"; // Senha fixa para administrador
 
         // Mostrar seção de registro
         function showRegister() {
@@ -115,7 +112,6 @@
         function register() {
             const username = document.getElementById("register-username").value;
             const password = document.getElementById("register-password").value;
-            const role = document.getElementById("register-role").value;
 
             if (!username || !password) {
                 document.getElementById("register-error").innerText = "Preencha todos os campos!";
@@ -128,7 +124,7 @@
                 return;
             }
 
-            users.push({ username, password, role });
+            users.push({ username, password, role: "aluno" });
             alert("Usuário registrado com sucesso!");
             showLogin();
         }
@@ -138,6 +134,16 @@
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
+            if (password === adminPassword) {
+                // Login como administrador
+                currentUser = { username, role: "admin" };
+                document.getElementById("user-role").innerText = "Administrador";
+                document.getElementById("login-section").classList.add("hidden");
+                document.getElementById("voting-section").classList.remove("hidden");
+                document.getElementById("admin-panel").classList.remove("hidden");
+                return;
+            }
+
             const user = users.find(u => u.username === username && u.password === password);
 
             if (!user) {
@@ -146,15 +152,10 @@
             }
 
             currentUser = user;
-            document.getElementById("user-role").innerText = user.role === "admin" ? "Administrador" : "Aluno";
+            document.getElementById("user-role").innerText = "Aluno";
             document.getElementById("login-section").classList.add("hidden");
             document.getElementById("voting-section").classList.remove("hidden");
-
-            if (user.role === "admin") {
-                document.getElementById("admin-panel").classList.remove("hidden");
-            } else {
-                document.getElementById("student-panel").classList.remove("hidden");
-            }
+            document.getElementById("student-panel").classList.remove("hidden");
         }
 
         // Função de votação
