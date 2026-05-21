@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Votação Escolar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+        }
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #1877f2;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #155db2;
+        }
+        .hidden {
+            display: none;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Seção de Login -->
+        <div id="login-section">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Usuário">
+            <input type="password" id="password" placeholder="Senha">
+            <button onclick="login()">Entrar</button>
+            <p id="login-error" class="error"></p>
+            <p>Não tem uma conta? <a href="#" onclick="showRegister()">Registre-se aqui</a></p>
+        </div>
+
+        <!-- Seção de Registro -->
+        <div id="register-section" class="hidden">
+            <h2>Registrar</h2>
+            <input type="text" id="register-username" placeholder="Novo Usuário">
+            <input type="password" id="register-password" placeholder="Nova Senha">
+            <select id="register-role">
+                <option value="aluno">Aluno</option>
+                <option value="admin">Administrador</option>
+            </select>
+            <button onclick="register()">Registrar</button>
+            <p id="register-error" class="error"></p>
+            <p>Já tem uma conta? <a href="#" onclick="showLogin()">Faça login aqui</a></p>
+        </div>
+
+        <!-- Seção de Votação -->
+        <div id="voting-section" class="hidden">
+            <h2>Bem-vindo, <span id="user-role"></span>!</h2>
+            <div id="admin-panel" class="hidden">
+                <h3>Administração</h3>
+                <p>Usuários que votaram:</p>
+                <ul id="voters-list"></ul>
+            </div>
+            <div id="student-panel">
+                <h3>Vote em um evento:</h3>
+                <button onclick="vote('Festa Junina')">Festa Junina</button>
+                <button onclick="vote('Feira de Ciências')">Feira de Ciências</button>
+                <button onclick="vote('Campeonato Esportivo')">Campeonato Esportivo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulação de banco de dados
+        const users = [];
+        let currentUser = null;
+
+        // Mostrar seção de registro
+        function showRegister() {
+            document.getElementById("login-section").classList.add("hidden");
+            document.getElementById("register-section").classList.remove("hidden");
+        }
+
+        // Mostrar seção de login
+        function showLogin() {
+            document.getElementById("register-section").classList.add("hidden");
+            document.getElementById("login-section").classList.remove("hidden");
+        }
+
+        // Função de registro
+        function register() {
+            const username = document.getElementById("register-username").value;
+            const password = document.getElementById("register-password").value;
+            const role = document.getElementById("register-role").value;
+
+            if (!username || !password) {
+                document.getElementById("register-error").innerText = "Preencha todos os campos!";
+                return;
+            }
+
+            const userExists = users.some(user => user.username === username);
+            if (userExists) {
+                document.getElementById("register-error").innerText = "Usuário já existe!";
+                return;
+            }
+
+            users.push({ username, password, role });
+            alert("Usuário registrado com sucesso!");
+            showLogin();
+        }
+
+        // Função de login
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (!user) {
+                document.getElementById("login-error").innerText = "Usuário ou senha inválidos!";
+                return;
+            }
+
+            currentUser = user;
+            document.getElementById("user-role").innerText = user.role === "admin" ? "Administrador" : "Aluno";
+            document.getElementById("login-section").classList.add("hidden");
+            document.getElementById("voting-section").classList.remove("hidden");
+
+            if (user.role === "admin") {
+                document.getElementById("admin-panel").classList.remove("hidden");
+            } else {
+                document.getElementById("student-panel").classList.remove("hidden");
+            }
+        }
+
+        // Função de votação
+        function vote(event) {
+            if (currentUser.role !== "aluno") {
+                alert("Apenas alunos podem votar!");
+                return;
+            }
+
+            alert(`Você votou em: ${event}`);
+            const votersList = document.getElementById("voters-list");
+            const listItem = document.createElement("li");
+            listItem.innerText = `${currentUser.username} votou em ${event}`;
+            votersList.appendChild(listItem);
+        }
+    </script>
+</body>
+</html>
