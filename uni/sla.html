@@ -3,44 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Votação Escolar</title>
+    <title>Rede Social de Votação</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #f0f2f5;
         }
         .container {
+            max-width: 600px;
+            margin: 20px auto;
             background: #fff;
-            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
+            overflow: hidden;
         }
-        h2 {
-            text-align: center;
-        }
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
+        header {
             background-color: #1877f2;
             color: white;
-            font-weight: bold;
-            cursor: pointer;
+            padding: 15px;
+            text-align: center;
         }
-        button:hover {
-            background-color: #155db2;
+        .content {
+            padding: 20px;
         }
         .hidden {
             display: none;
@@ -49,43 +35,87 @@
             color: red;
             font-size: 0.9em;
         }
+        .feed {
+            margin-top: 20px;
+        }
+        .post {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .post h4 {
+            margin: 0 0 5px;
+        }
+        .post p {
+            margin: 0;
+        }
+        button {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #155db2;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Seção de Login -->
-        <div id="login-section">
-            <h2>Login</h2>
-            <input type="text" id="username" placeholder="Usuário">
-            <input type="password" id="password" placeholder="Senha">
-            <button onclick="login()">Entrar</button>
-            <p id="login-error" class="error"></p>
-            <p>Não tem uma conta? <a href="#" onclick="showRegister()">Registre-se aqui</a></p>
-        </div>
-
-        <!-- Seção de Registro -->
-        <div id="register-section" class="hidden">
-            <h2>Registrar</h2>
-            <input type="text" id="register-username" placeholder="Novo Usuário">
-            <input type="password" id="register-password" placeholder="Nova Senha">
-            <button onclick="register()">Registrar</button>
-            <p id="register-error" class="error"></p>
-            <p>Já tem uma conta? <a href="#" onclick="showLogin()">Faça login aqui</a></p>
-        </div>
-
-        <!-- Seção de Votação -->
-        <div id="voting-section" class="hidden">
-            <h2>Bem-vindo, <span id="user-role"></span>!</h2>
-            <div id="admin-panel" class="hidden">
-                <h3>Administração</h3>
-                <p>Usuários que votaram:</p>
-                <ul id="voters-list"></ul>
+        <header>
+            <h1>Rede Social de Votação</h1>
+        </header>
+        <div class="content">
+            <!-- Seção de Login -->
+            <div id="login-section">
+                <h2>Login</h2>
+                <input type="text" id="username" placeholder="Usuário">
+                <input type="password" id="password" placeholder="Senha">
+                <button onclick="login()">Entrar</button>
+                <p id="login-error" class="error"></p>
+                <p>Não tem uma conta? <a href="#" onclick="showRegister()">Registre-se aqui</a></p>
             </div>
-            <div id="student-panel">
-                <h3>Vote em um evento:</h3>
-                <button onclick="vote('Festa Junina')">Festa Junina</button>
-                <button onclick="vote('Feira de Ciências')">Feira de Ciências</button>
-                <button onclick="vote('Campeonato Esportivo')">Campeonato Esportivo</button>
+
+            <!-- Seção de Registro -->
+            <div id="register-section" class="hidden">
+                <h2>Registrar</h2>
+                <input type="text" id="register-username" placeholder="Novo Usuário">
+                <input type="password" id="register-password" placeholder="Nova Senha">
+                <button onclick="register()">Registrar</button>
+                <p id="register-error" class="error"></p>
+                <p>Já tem uma conta? <a href="#" onclick="showLogin()">Faça login aqui</a></p>
+            </div>
+
+            <!-- Seção de Votação -->
+            <div id="voting-section" class="hidden">
+                <h2>Bem-vindo, <span id="user-role"></span>!</h2>
+                <div id="admin-panel" class="hidden">
+                    <h3>Painel de Administração</h3>
+                    <p>Usuários que votaram:</p>
+                    <ul id="voters-list"></ul>
+                </div>
+                <div id="student-panel">
+                    <h3>Vote em um evento:</h3>
+                    <button onclick="vote('Festa Junina')">Festa Junina</button>
+                    <button onclick="vote('Feira de Ciências')">Feira de Ciências</button>
+                    <button onclick="vote('Campeonato Esportivo')">Campeonato Esportivo</button>
+                </div>
+                <div class="feed">
+                    <h3>Feed de Votos</h3>
+                    <div id="feed"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -94,7 +124,8 @@
         // Simulação de banco de dados
         const users = [];
         let currentUser = null;
-        const adminPassword = "senhaAdmin123"; // Senha fixa para administrador
+        const adminPassword = "senhaAdmin"; // Senha fixa para administrador
+        const feedPosts = []; // Lista de votos para o feed
 
         // Mostrar seção de registro
         function showRegister() {
@@ -155,7 +186,6 @@
             document.getElementById("user-role").innerText = "Aluno";
             document.getElementById("login-section").classList.add("hidden");
             document.getElementById("voting-section").classList.remove("hidden");
-            document.getElementById("student-panel").classList.remove("hidden");
         }
 
         // Função de votação
@@ -165,11 +195,31 @@
                 return;
             }
 
-            alert(`Você votou em: ${event}`);
-            const votersList = document.getElementById("voters-list");
-            const listItem = document.createElement("li");
-            listItem.innerText = `${currentUser.username} votou em ${event}`;
-            votersList.appendChild(listItem);
+            const post = {
+                username: currentUser.username,
+                event,
+                timestamp: new Date().toLocaleString()
+            };
+
+            feedPosts.push(post);
+            updateFeed();
+        }
+
+        // Atualizar o feed
+        function updateFeed() {
+            const feed = document.getElementById("feed");
+            feed.innerHTML = ""; // Limpar feed
+
+            feedPosts.forEach(post => {
+                const postElement = document.createElement("div");
+                postElement.classList.add("post");
+                postElement.innerHTML = `
+                    <h4>${post.username}</h4>
+                    <p>Votou em: ${post.event}</p>
+                    <small>${post.timestamp}</small>
+                `;
+                feed.appendChild(postElement);
+            });
         }
     </script>
 </body>
