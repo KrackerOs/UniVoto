@@ -1,226 +1,644 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rede Social de Votação</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
-        }
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-        header {
-            background-color: #1877f2;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-        .content {
-            padding: 20px;
-        }
-        .hidden {
-            display: none;
-        }
-        .error {
-            color: red;
-            font-size: 0.9em;
-        }
-        .feed {
-            margin-top: 20px;
-        }
-        .post {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .post h4 {
-            margin: 0 0 5px;
-        }
-        .post p {
-            margin: 0;
-        }
-        button {
-            background-color: #1877f2;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background-color: #155db2;
-        }
-        input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniVoto — Escolha seu Passeio Escolar!</title>
+<meta name="description" content="Vote no passeio escolar da sua turma! Sistema seguro e divertido.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p:#1A56DB;--p2:#1E429F;--p3:#E8F0FE;
+  --s:#2563EB;--s2:#3B82F6;--s3:#60A5FA;--s4:#93C5FD;--s5:#DBEAFE;
+  --ac:#0EA5E9;--ac2:#0284C7;
+  --ok:#059669;--err:#DC2626;
+  --bg:#EFF6FF;--card:#fff;--text:#1E3A5F;--muted:#4A6FA5;--border:#BFDBFE;
+  --r:14px;--sh:0 2px 18px rgba(26,86,219,.10);
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+#root{max-width:940px;margin:0 auto;padding:22px 14px 70px}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1E429F 0%,#1A56DB 60%,#2563EB 100%);border-radius:22px;padding:20px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(26,86,219,.28)}
+.hdr::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:rgba(255,255,255,.06);border-radius:50%}
+.hdr::after{content:'';position:absolute;bottom:-40px;left:30%;width:160px;height:160px;background:rgba(255,255,255,.04);border-radius:50%}
+.hdr-left{display:flex;align-items:center;gap:16px;z-index:1}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-img{width:56px;height:56px;object-fit:contain;filter:brightness(0) invert(1);border-radius:12px;background:rgba(255,255,255,.12);padding:6px}
+.logo-text{display:flex;flex-direction:column}
+.logo-name{font-family:'Fredoka One',cursive;color:#fff;font-size:26px;line-height:1;letter-spacing:.5px}
+.logo-sub{color:rgba(255,255,255,.72);font-size:12px;margin-top:2px;font-weight:600}
+.hdr-right{display:flex;align-items:center;gap:8px;z-index:1}
+.hdr-deco{background:rgba(255,255,255,.12);border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid rgba(255,255,255,.18)}
+.admin-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.35);color:#fff;border-radius:10px;padding:9px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;letter-spacing:.3px}
+.admin-btn:hover{background:rgba(255,255,255,.28);transform:translateY(-1px)}
+
+/* TABS */
+.tabs{display:flex;gap:8px;margin-bottom:22px}
+.tab{flex:1;padding:11px 8px;border:2px solid var(--border);background:var(--card);border-radius:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all .18s;color:var(--muted)}
+.tab.on{border-color:var(--p);background:var(--p3);color:var(--p)}
+
+/* CARDS */
+.card{background:var(--card);border-radius:var(--r);border:1.5px solid var(--border);box-shadow:var(--sh);padding:22px;margin-bottom:16px;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card-title{font-family:'Fredoka One',cursive;font-size:18px;color:var(--p);margin-bottom:16px;display:flex;align-items:center;gap:7px}
+
+/* FORM */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.row2{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fg label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.fg input,.fg textarea{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .2s;width:100%}
+.fg input:focus,.fg textarea:focus{border-color:var(--p);background:#fff}
+.fg textarea{resize:vertical;min-height:72px}
+.fg .warn{font-size:12px;color:var(--err);font-weight:800;margin-top:3px;display:none;background:#FEF2F2;padding:5px 9px;border-radius:7px;border:1px solid #FECACA}
+.fg.bad input,.fg.bad textarea{border-color:var(--err)}
+.fg.bad .warn{display:block}
+
+/* VOTE OPTIONS */
+.vopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px}
+.vopt{border:2px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .17s;background:var(--bg);font-weight:800;font-size:13px;color:var(--muted);position:relative;user-select:none}
+.vopt .vi{font-size:30px;display:block;margin-bottom:6px}
+.vopt:hover{border-color:var(--s2);color:var(--p);background:var(--s5);transform:translateY(-3px);box-shadow:0 4px 16px rgba(26,86,219,.13)}
+.vopt.sel{border-color:var(--p);background:var(--p3);color:var(--p);box-shadow:0 4px 16px rgba(26,86,219,.18)}
+.vopt.sel::after{content:'✓';position:absolute;top:6px;right:8px;background:var(--p);color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:900}
+
+/* SUBMIT */
+.sbtn{width:100%;background:linear-gradient(135deg,#1E429F,#1A56DB);color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Fredoka One',cursive;font-size:18px;cursor:pointer;transition:all .18s;letter-spacing:.4px;box-shadow:0 4px 20px rgba(26,86,219,.3)}
+.sbtn:hover{background:linear-gradient(135deg,#1A3A8F,#1648C8);transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,86,219,.35)}
+.sbtn:active{transform:translateY(0)}
+.sbtn:disabled{background:#93C5FD;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* TOAST */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-90px);background:#059669;color:#fff;padding:13px 28px;border-radius:14px;font-weight:800;font-size:14px;z-index:9999;transition:transform .38s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 28px rgba(5,150,105,.3);pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--err);box-shadow:0 8px 28px rgba(220,38,38,.3)}
+
+/* MODAL OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,23,66,.6);z-index:500;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:20px;padding:30px 26px;width:100%;max-width:380px;animation:popIn .22s ease;border:1.5px solid var(--border)}
+@keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.modal h2{font-family:'Fredoka One',cursive;font-size:22px;color:var(--p);margin-bottom:18px;text-align:center}
+.modal input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--text);outline:none;margin-bottom:12px;transition:border-color .2s}
+.modal input:focus{border-color:var(--p)}
+.merr{font-size:13px;color:var(--err);font-weight:800;margin-bottom:12px;display:none;background:#FEF2F2;padding:8px 12px;border-radius:8px;border:1px solid #FECACA}
+.mbtns{display:flex;gap:10px}
+.mbtn{flex:1;border-radius:10px;padding:11px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;border:none;transition:all .18s}
+.mbtn.cancel{background:var(--bg);color:var(--muted);border:1.5px solid var(--border)}
+.mbtn.cancel:hover{background:var(--border)}
+.mbtn.enter{background:linear-gradient(135deg,#1E429F,#1A56DB);color:#fff;box-shadow:0 4px 14px rgba(26,86,219,.28)}
+.mbtn.enter:hover{background:linear-gradient(135deg,#1A3A8F,#1648C8)}
+
+/* STATS GRID */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:18px}
+.metric{background:linear-gradient(135deg,var(--p3),var(--s5));border-radius:12px;padding:14px;text-align:center;border:1.5px solid var(--border)}
+.metric .mi{font-size:22px;margin-bottom:5px}
+.metric .mv{font-family:'Fredoka One',cursive;font-size:28px;color:var(--p);line-height:1}
+.metric .mw{font-size:13px;font-weight:800;color:var(--p);padding-top:4px;line-height:1.3}
+.metric .ml{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+
+/* CHARTS */
+.charts2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:520px){.charts2{grid-template-columns:1fr}}
+.cbox{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:18px}
+.cbox h3{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.leg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:700}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* RANKING */
+.rank-item{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.rank-medal{font-size:16px;min-width:22px}
+.rank-body{flex:1}
+.rank-name{font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px}
+.rank-bw{background:var(--s5);border-radius:20px;height:7px;overflow:hidden}
+.rank-b{height:100%;border-radius:20px;transition:width .7s ease}
+.rank-pct{font-size:12px;color:var(--muted);min-width:38px;text-align:right;font-weight:800}
+
+/* VOTE ROWS */
+.vr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1.5px solid var(--border);animation:fadeUp .25s ease}
+.vr:last-child{border-bottom:none}
+.vr-av{width:34px;height:34px;border-radius:50%;background:var(--p3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--p);flex-shrink:0;border:2px solid var(--border)}
+.vr-name{font-size:13px;font-weight:800;flex:1;color:var(--text)}
+.vr-meta{font-size:11px;color:var(--muted);font-weight:600}
+.pill{font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px}
+.pill-t{background:var(--p3);color:var(--p)}
+.pill-d{background:var(--s5);color:var(--s);border:1px solid var(--border)}
+
+/* SECTIONS */
+.sec{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.sec h3{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+
+/* SUGGESTIONS */
+.sugg-i{background:var(--s5);border:1.5px solid var(--s4);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;color:#1E3A5F;font-weight:600}
+.sugg-m{font-size:11px;color:var(--muted);margin-top:3px;font-weight:700}
+
+/* TABLE */
+.ttable{width:100%;border-collapse:collapse;font-size:13px}
+.ttable th{text-align:left;color:var(--muted);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:6px 4px;border-bottom:2px solid var(--border)}
+.ttable td{padding:10px 4px;border-bottom:1px solid var(--border);font-weight:700;color:var(--text)}
+.ttable tr:last-child td{border-bottom:none}
+
+.empty{text-align:center;padding:32px;color:var(--muted);font-size:14px;font-weight:700}
+.hidden{display:none!important}
+
+/* DASHBOARD HEADER */
+.dash-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border)}
+.dash-h h2{font-family:'Fredoka One',cursive;font-size:22px;color:var(--p);display:flex;align-items:center;gap:8px}
+.dash-btns{display:flex;gap:8px}
+.ref-btn{background:var(--p3);border:1.5px solid var(--p);color:var(--p);border-radius:9px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer}
+.ref-btn:hover{background:var(--s5)}
+.exit-btn{background:#FEF2F2;border:1.5px solid #FECACA;color:var(--err);border-radius:9px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer}
+.exit-btn:hover{background:#FEE2E2}
+
+/* FOOTER */
+.footer{text-align:center;padding:28px 0 10px;color:var(--muted);font-size:12px;font-weight:700}
+.footer span{color:var(--p)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--s4);border-radius:20px}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .hdr{padding:14px 16px}
+  .logo-name{font-size:20px}
+  .logo-img{width:44px;height:44px}
+  .hdr-deco{display:none}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Rede Social de Votação</h1>
-        </header>
-        <div class="content">
-            <!-- Seção de Login -->
-            <div id="login-section">
-                <h2>Login</h2>
-                <input type="text" id="username" placeholder="Usuário">
-                <input type="password" id="password" placeholder="Senha">
-                <button onclick="login()">Entrar</button>
-                <p id="login-error" class="error"></p>
-                <p>Não tem uma conta? <a href="#" onclick="showRegister()">Registre-se aqui</a></p>
-            </div>
 
-            <!-- Seção de Registro -->
-            <div id="register-section" class="hidden">
-                <h2>Registrar</h2>
-                <input type="text" id="register-username" placeholder="Novo Usuário">
-                <input type="password" id="register-password" placeholder="Nova Senha">
-                <button onclick="register()">Registrar</button>
-                <p id="register-error" class="error"></p>
-                <p>Já tem uma conta? <a href="#" onclick="showLogin()">Faça login aqui</a></p>
-            </div>
+<div id="root">
 
-            <!-- Seção de Votação -->
-            <div id="voting-section" class="hidden">
-                <h2>Bem-vindo, <span id="user-role"></span>!</h2>
-                <div id="admin-panel" class="hidden">
-                    <h3>Painel de Administração</h3>
-                    <p>Usuários que votaram:</p>
-                    <ul id="voters-list"></ul>
-                </div>
-                <div id="student-panel">
-                    <h3>Vote em um evento:</h3>
-                    <button onclick="vote('Festa Junina')">Festa Junina</button>
-                    <button onclick="vote('Feira de Ciências')">Feira de Ciências</button>
-                    <button onclick="vote('Campeonato Esportivo')">Campeonato Esportivo</button>
-                </div>
-                <div class="feed">
-                    <h3>Feed de Votos</h3>
-                    <div id="feed"></div>
-                </div>
-            </div>
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="logo-wrap">
+        <img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='90' fill='%231A56DB' opacity='.18'/%3E%3Ctext x='100' y='130' text-anchor='middle' font-size='100' font-family='serif'%3E%3C/text%3E%3C/svg%3E" alt="UniVoto Logo" id="logo-img">
+        <div class="logo-text">
+          <div class="logo-name">UniVoto</div>
+          <div class="logo-sub">Sistema de Votação Escolar</div>
         </div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-deco"></div>
+      <div class="hdr-deco"></div>
+      <button class="admin-btn" onclick="openLoginModal()"> Admin</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="main-tabs">
+    <button class="tab on" onclick="setTab('votar',this)"> Votar</button>
+    <button class="tab" onclick="setTab('resultados',this)"> Resultados</button>
+  </div>
+
+  <div id="tab-votar">
+    <div class="card">
+      <div class="card-title"> Seus Dados</div>
+      <div class="row2">
+        <div class="fg" id="fg-nome">
+          <label>Nome do Aluno</label>
+          <input id="inp-nome" type="text" placeholder="Seu nome completo" maxlength="60" oninput="checkField('fg-nome','inp-nome')">
+          <span class="warn"> Palavra inadequada detectada.</span>
+        </div>
+        <div class="fg" id="fg-turma">
+          <label>Turma / Sala</label>
+          <input id="inp-turma" type="text" placeholder="Ex: 5ºA, 8B, 3ºC..." maxlength="20">
+        </div>
+      </div>
     </div>
 
-    <script>
-        // Simulação de banco de dados
-        const users = [];
-        let currentUser = null;
-        const adminPassword = "senhaAdmin"; // Senha fixa para administrador
-        const feedPosts = []; // Lista de votos para o feed
+    <div class="card">
+      <div class="card-title"> Escolha o Passeio</div>
+      <div class="vopts" id="vopts">
+        <div class="vopt" onclick="selOpt(this,'Parque de Diversões')"><span class="vi"></span>Parque de Diversões</div>
+        <div class="vopt" onclick="selOpt(this,'Zoológico')"><span class="vi"></span>Zoológico</div>
+        <div class="vopt" onclick="selOpt(this,'Museu')"><span class="vi"></span>Museu</div>
+        <div class="vopt" onclick="selOpt(this,'Cinema')"><span class="vi"></span>Cinema</div>
+        <div class="vopt" onclick="selOpt(this,'Praia')"><span class="vi"></span>Praia</div>
+        <div class="vopt" onclick="selOpt(this,'Outros')"><span class="vi"></span>Outros</div>
+      </div>
+    </div>
 
-        // Mostrar seção de registro
-        function showRegister() {
-            document.getElementById("login-section").classList.add("hidden");
-            document.getElementById("register-section").classList.remove("hidden");
-        }
+    <div class="card">
+      <div class="card-title"> Sugestão <span style="font-size:14px;font-weight:500;color:var(--muted)">(opcional)</span></div>
+      <div class="fg" id="fg-sugg">
+        <textarea id="inp-sugg" placeholder="Tem algum lugar diferente que gostaria de visitar? Conta pra gente!" maxlength="300" oninput="checkField('fg-sugg','inp-sugg')"></textarea>
+        <span class="warn"> Mensagem contém palavras inadequadas.</span>
+      </div>
+    </div>
 
-        // Mostrar seção de login
-        function showLogin() {
-            document.getElementById("register-section").classList.add("hidden");
-            document.getElementById("login-section").classList.remove("hidden");
-        }
+    <button class="sbtn" onclick="submitVote()"> Enviar Meu Voto!</button>
+  </div>
 
-        // Função de registro
-        function register() {
-            const username = document.getElementById("register-username").value;
-            const password = document.getElementById("register-password").value;
+  <div id="tab-resultados" class="hidden">
+    <div class="metrics" id="pub-metrics"></div>
+    <div class="charts2">
+      <div class="cbox">
+        <h3> Votos por destino</h3>
+        <div id="pub-bar-leg" class="leg"></div>
+        <div style="position:relative;height:195px"><canvas id="pubBar" role="img" aria-label="Votos por destino"></canvas></div>
+      </div>
+      <div class="cbox">
+        <h3> Distribuição %</h3>
+        <div id="pub-pie-leg" class="leg"></div>
+        <div style="position:relative;height:195px"><canvas id="pubPie" role="img" aria-label="Distribuição dos votos"></canvas></div>
+      </div>
+    </div>
+    <div class="sec">
+      <h3> Ranking Geral</h3>
+      <div id="pub-ranking"></div>
+    </div>
+    <div class="sec">
+      <h3> Últimos Votos</h3>
+      <div id="pub-votes"></div>
+    </div>
+  </div>
 
-            if (!username || !password) {
-                document.getElementById("register-error").innerText = "Preencha todos os campos!";
-                return;
-            }
+  <div id="tab-admin" class="hidden">
+    <div class="dash-h">
+      <h2> Painel Administrativo</h2>
+      <div class="dash-btns">
+        <button class="ref-btn" onclick="renderAdmin()"> Atualizar</button>
+        <button class="exit-btn" onclick="logoutAdmin()">Sair</button>
+      </div>
+    </div>
+    <div class="metrics" id="adm-metrics"></div>
+    <div class="charts2">
+      <div class="cbox">
+        <h3> Votos por destino</h3>
+        <div id="adm-bar-leg" class="leg"></div>
+        <div style="position:relative;height:210px"><canvas id="admBar" role="img" aria-label="Votos admin"></canvas></div>
+      </div>
+      <div class="cbox">
+        <h3> Distribuição %</h3>
+        <div id="adm-pie-leg" class="leg"></div>
+        <div style="position:relative;height:210px"><canvas id="admPie" role="img" aria-label="Pizza admin"></canvas></div>
+      </div>
+    </div>
+    
+    <div class="sec">
+      <h3>Alterar Senha do Administrador</h3>
+      <div class="row2" style="margin-top: 8px;">
+        <div class="fg">
+          <input id="inp-nova-senha" type="password" placeholder="Digite a nova senha de Admin">
+        </div>
+        <button class="ref-btn" onclick="alterarSenhaAdmin()" style="height: 44px;">Salvar Nova Senha</button>
+      </div>
+    </div>
 
-            const userExists = users.some(user => user.username === username);
-            if (userExists) {
-                document.getElementById("register-error").innerText = "Usuário já existe!";
-                return;
-            }
+    <div class="sec">
+      <h3>Histórico de Logins e Tentativas</h3>
+      <div id="adm-logins" style="max-height: 200px; overflow-y: auto;"></div>
+    </div>
 
-            users.push({ username, password, role: "aluno" });
-            alert("Usuário registrado com sucesso!");
-            showLogin();
-        }
+    <div class="charts2" style="margin-bottom:14px">
+      <div class="sec" style="margin-bottom:0">
+        <h3> Votos por Turma</h3>
+        <div id="adm-turmas"></div>
+      </div>
+      <div class="sec" style="margin-bottom:0">
+        <h3> Sugestões dos Alunos</h3>
+        <div id="adm-sugg"></div>
+      </div>
+    </div>
+    <div class="sec">
+      <h3> Todos os Votos Registrados</h3>
+      <div id="adm-votes"></div>
+    </div>
+  </div>
 
-        // Função de login
-        function login() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+  <div class="footer">Desenvolvido com por <span>UniVoto</span> &mdash; Sistema Escolar de Votação</div>
+</div>
 
-            if (password === adminPassword) {
-                // Login como administrador
-                currentUser = { username, role: "admin" };
-                document.getElementById("user-role").innerText = "Administrador";
-                document.getElementById("login-section").classList.add("hidden");
-                document.getElementById("voting-section").classList.remove("hidden");
-                document.getElementById("admin-panel").classList.remove("hidden");
-                return;
-            }
+<div class="overlay" id="ov-login">
+  <div class="modal">
+    <h2> Área Administrativa</h2>
+    <input id="pw-in" type="password" placeholder="Digite a senha do admin..." onkeydown="if(event.key==='Enter')tryLogin()">
+    <div class="merr" id="pw-err"> Senha incorreta. Tente novamente.</div>
+    <div class="mbtns">
+      <button class="mbtn cancel" onclick="closeOverlay('ov-login')">Cancelar</button>
+      <button class="mbtn enter" onclick="tryLogin()">Entrar →</button>
+    </div>
+  </div>
+</div>
 
-            const user = users.find(u => u.username === username && u.password === password);
+<div class="toast" id="toast"></div>
 
-            if (!user) {
-                document.getElementById("login-error").innerText = "Usuário ou senha inválidos!";
-                return;
-            }
+<script>
+// ─── Config Atualizada com Carregamento Dinâmico de Senha ───
+const PASSEIOS = ['Parque de Diversões','Zoológico','Museu','Cinema','Praia','Outros'];
+const ICO = {'Parque de Diversões':'','Zoológico':'','Museu':'','Cinema':'','Praia':'','Outros':''};
+const CLR = ['#1A56DB','#2563EB','#0EA5E9','#0284C7','#1D4ED8','#60A5FA'];
+const MEDALS = ['','','','','',''];
+const BAD = ['merda','bosta','puta','porra','viado','cu','caralho','buceta','vsf','foda','idiota','burro','cretino','imbecil','lixo','safado','vagabundo','desgraça','corno'];
 
-            currentUser = user;
-            document.getElementById("user-role").innerText = "Aluno";
-            document.getElementById("login-section").classList.add("hidden");
-            document.getElementById("voting-section").classList.remove("hidden");
-        }
+let selOp = '';
+let pubBar, pubPie, admBar, admPie;
+let spamMap = {};
 
-        // Função de votação
-        function vote(event) {
-            if (currentUser.role !== "aluno") {
-                alert("Apenas alunos podem votar!");
-                return;
-            }
+// ─── Storage para Senha, Votos e Logins ───
+function getSenha(){ return localStorage.getItem('univoto_password') || '123'; }
+function saveSenha(novaSenha){ localStorage.setItem('univoto_password', novaSenha); }
 
-            const post = {
-                username: currentUser.username,
-                event,
-                timestamp: new Date().toLocaleString()
-            };
+function loadV(){ try{ return JSON.parse(localStorage.getItem('univoto_votes')||'[]'); }catch(e){ return []; } }
+function saveV(v){ try{ localStorage.setItem('univoto_votes', JSON.stringify(v)); }catch(e){} }
 
-            feedPosts.push(post);
-            updateFeed();
-        }
+function loadLogins(){ try{ return JSON.parse(localStorage.getItem('univoto_logins')||'[]'); }catch(e){ return []; } }
+function saveLoginAttempt(sucesso, info){
+  let logins = loadLogins();
+  logins.push({ sucesso, info, ts: new Date().toISOString() });
+  localStorage.setItem('univoto_logins', JSON.stringify(logins));
+}
 
-        // Atualizar o feed
-        function updateFeed() {
-            const feed = document.getElementById("feed");
-            feed.innerHTML = ""; // Limpar feed
+// ─── Utils ───
+function hasBad(t){ const s=t.toLowerCase().replace(/[^a-záéíóúàãõâêôç ]/gi,' '); return BAD.some(w=>s.includes(w)); }
+function esc(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function ini(n){ return n.trim().split(' ').filter(Boolean).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?'; }
+function cnt(v){ const c={}; PASSEIOS.forEach(p=>c[p]=0); v.forEach(x=>{ if(c[x.voto]!==undefined) c[x.voto]++; else c['Outros']++; }); return c; }
 
-            feedPosts.forEach(post => {
-                const postElement = document.createElement("div");
-                postElement.classList.add("post");
-                postElement.innerHTML = `
-                    <h4>${post.username}</h4>
-                    <p>Votou em: ${post.event}</p>
-                    <small>${post.timestamp}</small>
-                `;
-                feed.appendChild(postElement);
-            });
-        }
-    </script>
+// ─── Validação ───
+function checkField(fgId, inpId){
+  const val = document.getElementById(inpId).value;
+  document.getElementById(fgId).classList.toggle('bad', val.length > 0 && hasBad(val));
+}
+
+// ─── Selecionar opção ───
+function selOpt(el, val){
+  document.querySelectorAll('.vopt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  selOp = val;
+}
+
+// ─── Trocar aba ───
+function setTab(t, btn){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  btn.classList.add('on');
+  ['votar','resultados','admin'].forEach(id=>{
+    document.getElementById('tab-'+id).classList.toggle('hidden', id!==t);
+  });
+  if(t==='resultados') renderPublic();
+  if(t==='admin') renderAdmin();
+}
+
+// ─── Toast ───
+function showToast(msg, err){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(err?' err':'')+' show';
+  setTimeout(()=>t.classList.remove('show'), 3400);
+}
+
+// ─── Enviar voto ───
+function submitVote(){
+  const nome=document.getElementById('inp-nome').value.trim();
+  const turma=document.getElementById('inp-turma').value.trim();
+  const sugg=document.getElementById('inp-sugg').value.trim();
+  if(!nome){ showToast(' Digite seu nome!',true); return; }
+  if(hasBad(nome)){ showToast(' Nome contém palavras inadequadas!',true); return; }
+  if(!turma){ showToast(' Digite sua turma!',true); return; }
+  if(!selOp){ showToast(' Escolha um passeio!',true); return; }
+  if(sugg && hasBad(sugg)){ showToast(' Sugestão contém palavras inadequadas!',true); return; }
+  const key=nome.toLowerCase()+turma.toLowerCase();
+  const now=Date.now();
+  if(spamMap[key]&&(now-spamMap[key])<60000){ showToast(' Aguarde 1 minuto antes de votar novamente!',true); return; }
+  spamMap[key]=now;
+  const vs=loadV();
+  vs.push({nome,turma,voto:selOp,sugestao:sugg,ts:new Date().toISOString()});
+  saveV(vs);
+  document.getElementById('inp-nome').value='';
+  document.getElementById('inp-turma').value='';
+  document.getElementById('inp-sugg').value='';
+  document.querySelectorAll('.vopt').forEach(o=>o.classList.remove('sel'));
+  document.getElementById('fg-nome').classList.remove('bad');
+  document.getElementById('fg-sugg').classList.remove('bad');
+  selOp='';
+  showToast(' Seu voto foi enviado com sucesso!');
+}
+
+// ─── Resultados Públicos ───
+function renderPublic(){
+  const vs=loadV(); const c=cnt(vs); const total=vs.length;
+  const turmas=new Set(vs.map(v=>v.turma)).size;
+  const suggs=vs.filter(v=>v.sugestao).length;
+  const sorted=PASSEIOS.slice().sort((a,b)=>c[b]-c[a]);
+  const win=total>0?sorted[0]:'';
+  document.getElementById('pub-metrics').innerHTML=`
+    <div class="metric"><div class="mi"></div><div class="mv">${total}</div><div class="ml">Total de votos</div></div>
+    <div class="metric"><div class="mi"></div>${win?`<div class="mw">${ICO[win]} ${win}</div>`:'<div class="mv">—</div>'}<div class="ml">Mais votado</div></div>
+    <div class="metric"><div class="mi"></div><div class="mv">${turmas}</div><div class="ml">Turmas</div></div>
+    <div class="metric"><div class="mi"></div><div class="mv">${suggs}</div><div class="ml">Sugestões</div></div>`;
+  makeLeg('pub-bar-leg',c,total);
+  makeLeg('pub-pie-leg',c,total);
+  if(pubBar){pubBar.destroy();pubBar=null;}
+  if(pubPie){pubPie.destroy();pubPie=null;}
+  pubBar=mkBar('pubBar',c);
+  pubPie=mkPie('pubPie',c);
+  mkRanking('pub-ranking',c,total);
+  mkVList('pub-votes',vs,8);
+}
+
+// ─── Admin Dashboard ───
+function renderAdmin(){
+  const vs=loadV(); const c=cnt(vs); const total=vs.length;
+  const turmas=new Set(vs.map(v=>v.turma)).size;
+  const suggs=vs.filter(v=>v.sugestao).length;
+  const sorted=PASSEIOS.slice().sort((a,b)=>c[b]-c[a]);
+  const win=total>0?sorted[0]:'';
+  document.getElementById('adm-metrics').innerHTML=`
+    <div class="metric"><div class="mi"></div><div class="mv">${total}</div><div class="ml">Total</div></div>
+    <div class="metric"><div class="mi"></div>${win?`<div class="mw">${ICO[win]} ${win}</div>`:'<div class="mv">—</div>'}<div class="ml">Mais votado</div></div>
+    <div class="metric"><div class="mi"></div><div class="mv">${turmas}</div><div class="ml">Turmas</div></div>
+    <div class="metric"><div class="mi"></div><div class="mv">${suggs}</div><div class="ml">Sugestões</div></div>`;
+  makeLeg('adm-bar-leg',c,total);
+  makeLeg('adm-pie-leg',c,total);
+  if(admBar){admBar.destroy();admBar=null;}
+  if(admPie){admPie.destroy();admPie=null;}
+  admBar=mkBar('admBar',c);
+  admPie=mkPie('admPie',c);
+  mkRanking('adm-ranking',c,total);
+  mkTurmas('adm-turmas',vs);
+  mkSugg('adm-sugg',vs);
+  mkVList('adm-votes',vs,50);
+  renderLoginsList(); // Atualiza a lista visual de histórico de acessos
+}
+
+function makeLeg(id,c,total){
+  document.getElementById(id).innerHTML=PASSEIOS.map((p,i)=>
+    `<span class="leg-item"><span class="leg-dot" style="background:${CLR[i]}"></span>${p.split(' ')[0]} ${total>0?Math.round(c[p]/total*100)+'%':''}</span>`
+  ).join('');
+}
+
+function mkBar(id,c){
+  return new Chart(document.getElementById(id),{
+    type:'bar',
+    data:{labels:PASSEIOS.map(p=>p.length>8?p.split(' ')[0]:p),datasets:[{label:'Votos',data:PASSEIOS.map(p=>c[p]),backgroundColor:CLR,borderRadius:8,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:10,family:'Nunito'},color:'#4A6FA5'}},
+              y:{grid:{color:'rgba(74,111,165,.1)'},ticks:{stepSize:1,font:{size:10,family:'Nunito'},color:'#4A6FA5'}}}}
+  });
+}
+
+function mkPie(id,c){
+  return new Chart(document.getElementById(id),{
+    type:'doughnut',
+    data:{labels:PASSEIOS,datasets:[{data:PASSEIOS.map(p=>c[p]),backgroundColor:CLR,borderWidth:3,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}
+  });
+}
+
+function mkRanking(id,c,total){
+  const sorted=PASSEIOS.slice().sort((a,b)=>c[b]-c[a]);
+  const mx=c[sorted[0]]||1;
+  document.getElementById(id).innerHTML=sorted.map((p,i)=>`
+    <div class="rank-item">
+      <div class="rank-medal">${MEDALS[i]||i+1}</div>
+      <div class="rank-body">
+        <div class="rank-name">${ICO[p]} ${p}</div>
+        <div class="rank-bw"><div class="rank-b" style="width:${Math.round(c[p]/mx*100)}%;background:${CLR[PASSEIOS.indexOf(p)]}"></div></div>
+      </div>
+      <div class="rank-pct">${c[p]}v</div>
+      <div class="rank-pct">${total>0?Math.round(c[p]/total*100)+'%':'0%'}</div>
+    </div>`).join('');
+}
+
+function mkVList(id,vs,lim){
+  const el=document.getElementById(id);
+  const list=vs.slice().reverse().slice(0,lim);
+  if(!list.length){el.innerHTML='<div class="empty">Nenhum voto registrado ainda </div>';return;}
+  el.innerHTML=list.map(v=>`
+    <div class="vr">
+      <div class="vr-av">${esc(ini(v.nome))}</div>
+      <div style="flex:1"><div class="vr-name">${esc(v.nome)}</div><div class="vr-meta">${new Date(v.ts).toLocaleString('pt-BR')}</div></div>
+      <span class="pill pill-t">${esc(v.turma)}</span>
+      <span class="pill pill-d">${ICO[v.voto]||''} ${v.voto}</span>
+    </div>`).join('');
+}
+
+function mkTurmas(id,vs){
+  const map={};
+  vs.forEach(v=>{ if(!map[v.turma])map[v.turma]={tot:0,fav:{}}; map[v.turma].tot++; map[v.turma].fav[v.voto]=(map[v.turma].fav[v.voto]||0)+1; });
+  const tms=Object.keys(map).sort();
+  if(!tms.length){document.getElementById(id).innerHTML='<div class="empty">Sem votos ainda.</div>';return;}
+  document.getElementById(id).innerHTML=`<table class="ttable">
+    <thead><tr><th>Turma</th><th>Votos</th><th>Favorito</th></tr></thead>
+    <tbody>${tms.map(t=>{
+      const fav=Object.keys(map[t].fav).reduce((a,b)=>map[t].fav[a]>=map[t].fav[b]?a:b,'');
+      return `<tr><td>${esc(t)}</td><td>${map[t].tot}</td><td>${ICO[fav]||''} ${fav||'—'}</td></tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+function mkSugg(id,vs){
+  const suggs=vs.filter(v=>v.sugestao).slice().reverse();
+  if(!suggs.length){document.getElementById(id).innerHTML='<div class="empty">Nenhuma sugestão ainda.</div>';return;}
+  document.getElementById(id).innerHTML=suggs.slice(0,8).map(v=>`
+    <div class="sugg-i"> "${esc(v.sugestao)}"
+      <div class="sugg-m">— ${esc(v.nome)} · ${esc(v.turma)} · ${new Date(v.ts).toLocaleDateString('pt-BR')}</div>
+    </div>`).join('');
+}
+
+// ─── Renderizar o Histórico de Logins ───
+function renderLoginsList(){
+  const list = loadLogins().slice().reverse();
+  const container = document.getElementById('adm-logins');
+  if(!list.length){ container.innerHTML = '<div class="empty">Nenhuma tentativa registrada.</div>'; return; }
+  container.innerHTML = list.map(l => `
+    <div class="vr">
+      <div style="flex:1">
+        <div class="vr-name">${esc(l.info)}</div>
+        <div class="vr-meta">${new Date(l.ts).toLocaleString('pt-BR')}</div>
+      </div>
+      <span class="pill" style="background: ${l.sucesso ? '#D1FAE5; color: #065F46;' : '#FEE2E2; color: #991B1B;'}">
+        ${l.sucesso ? 'Sucesso' : 'Falhou'}
+      </span>
+    </div>
+  `).join('');
+}
+
+// ─── Alterar Senha de Administrador ───
+function alterarSenhaAdmin(){
+  const nova = document.getElementById('inp-nova-senha').value.trim();
+  if(!nova){ showToast('A nova senha não pode ser vazia!', true); return; }
+  saveSenha(nova);
+  document.getElementById('inp-nova-senha').value = '';
+  showToast('Senha de administrador alterada com sucesso!');
+}
+
+// ─── Auth Atualizada ───
+function openLoginModal(){
+  document.getElementById('ov-login').classList.add('open');
+  document.getElementById('pw-in').value='';
+  document.getElementById('pw-err').style.display='none';
+  setTimeout(()=>document.getElementById('pw-in').focus(),80);
+}
+
+/* Modificado para salvar logs de acesso e validar contra a senha salva no LocalStorage */
+function tryLogin(){
+  const senhaDigitada = document.getElementById('pw-in').value;
+  if(senhaDigitada === getSenha()){
+    saveLoginAttempt(true, "Acesso concedido ao Painel");
+    closeOverlay('ov-login');
+    if(!document.getElementById('tab-admin-btn')){
+      const btn=document.createElement('button');
+      btn.className='tab';
+      btn.id='tab-admin-btn';
+      btn.textContent=' Admin';
+      btn.onclick=function(){ setTab('admin',this); };
+      document.getElementById('main-tabs').appendChild(btn);
+    }
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    document.getElementById('tab-admin-btn').classList.add('on');
+    ['votar','resultados'].forEach(id=>document.getElementById('tab-'+id).classList.add('hidden'));
+    document.getElementById('tab-admin').classList.remove('hidden');
+    renderAdmin();
+  } else {
+    saveLoginAttempt(false, `Tentativa frustrada com a senha: "${senhaDigitada}"`);
+    const err=document.getElementById('pw-err');
+    err.style.display='block';
+    document.getElementById('pw-in').value='';
+    document.getElementById('pw-in').focus();
+    setTimeout(()=>err.style.display='none',3500);
+  }
+}
+
+function logoutAdmin(){
+  const btn=document.getElementById('tab-admin-btn');
+  if(btn) btn.remove();
+  document.getElementById('tab-admin').classList.add('hidden');
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  const first=document.querySelector('.tab');
+  if(first) first.classList.add('on');
+  document.getElementById('tab-votar').classList.remove('hidden');
+}
+
+document.getElementById('ov-login').addEventListener('click',function(e){ if(e.target===this) closeOverlay('ov-login'); });
+
+// ─── Injetar logo real da imagem enviada ───
+(function(){
+  const logo = document.getElementById('logo-img');
+  const svgLogo = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200">
+    <defs>
+      <linearGradient id="gU" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#1A56DB"/>
+        <stop offset="100%" style="stop-color:#60A5FA"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="90" cy="85" rx="55" ry="48" fill="#1A56DB" opacity=".85"/>
+    <rect x="84" y="78" width="5" height="22" fill="#1E3A5F"/>
+    <ellipse cx="87" cy="72" rx="14" ry="12" fill="#1E429F"/>
+    <polyline points="110,95 130,115 175,65" stroke="#60A5FA" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M120,130 Q150,118 180,128 Q210,138 240,126" stroke="#2563EB" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="205" cy="72" r="16" fill="#1A56DB"/>
+  </svg>`;
+  logo.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgLogo);
+})();
+</script>
 </body>
 </html>
